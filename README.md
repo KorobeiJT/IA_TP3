@@ -1,1 +1,2 @@
-# IA_TP3
+# IA
+intel artificiel
