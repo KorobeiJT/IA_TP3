@@ -3,19 +3,20 @@ import threading
 from Robot import Robot
 from Env import Env
 
-robot=Robot()
 environment=Env.instance()
+level = 1
 
-def env_thread():
-    environment.spawn()
+def main():
+    global level
+    environment.init(level)
+    robot=Robot(level)
+    robot.inference_engine()
+    #while 1:
+        ##if robot.inference_engine() == 0:
+            ##break
+    t = print("Cliquer sur entrée pour passer au niveau suivant : ")
+    level+=1
+    # main()
 
-def robot_thread():
-    while 1:
-        robot.analysis_cycle()
+main()
 
-
-
-env=threading.Thread(target=env_thread)
-rob=threading.Thread(target=robot_thread)
-env.start()
-rob.start()
