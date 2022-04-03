@@ -16,7 +16,6 @@ class Robot:
     effector=Effector()
     dead=False
     move="haut"
-    ctr = 0
 
     def __init__(self, level):
         self.lvl=level+2
