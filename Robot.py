@@ -7,59 +7,70 @@ import time
 
 class Robot:
 
+    ProbaDict={
+        'D':0,
+        'H':1,
+        '':0.9,
+        'P':0.6,
+        'C':0.6,
+        'F':0.5
+    }
     sensor=Sensor()
     position=(0,0)
-
+    move="haut"
     def __init__(self, level):
-        self.env=[['' for i in range(level+2)] for j in range(level+2)]
+        self.lvl=level+2
+        self.SureEnv=[['_' for i in range(self.lvl)] for j in range(self.lvl)]
+        self.UnsureEnv = [['_' for i in range(self.lvl)] for j in range(self.lvl)]
 
 
-    def display_env(self):
-        for x in self.env:
+    def display_env(self, env):
+        for x in env:
             print(x)
         print()
 
     
     def Sense(self):
+        Map={}
         print("Observing Environment...")
-        ListDirt,HasDirt= self.sensor.CaptPoussiere(self.position)
-        ListHot,HasHot= self.sensor.CaptChaleur(self.position)
-        ListShout,HasShout= self.sensor.CaptHurlement(self.position)
-
-        #updates the env the robot knows and will keep
-        if HasDirt : self.env[self.position[0]][self.position[1]]+='P'
-        if HasHot : self.env[self.position[0]][self.position[1]]+='C'
-        if HasShout : self.env[self.position[0]][self.position[1]]+='H'
-
-        #updates the temporary env with all the adjacent rooms
-        for var in ListDirt: self.env[var[0]][var[1]]+='P'
-        for var in ListHot: self.env[var[0]][var[1]]+='C'
-        for var in ListShout: self.env[var[0]][var[1]]+='H'
-
-        self.display_env()
+        Map = self.sensor.Capt(self.position)
+        for key in Map:
+            if Map[key] not in self.SureEnv[key[0]][key[1]] or Map[key]=='':
+                self.SureEnv[key[0]][key[1]]=self.SureEnv[key[0]][key[1]].replace("_","") #remove the unknown status
+                self.SureEnv[key[0]][key[1]]+=Map[key] #we add the value to the certain assesments
+                self.UnsureEnv[key[0]][key[1]]='' #and remove whatever value we had in the unsure assesments
+        self.display_env(self.SureEnv)
+        self.Deduct()
         print("Position now = ",self.position)
     
+    def Deduct(self):
+        for i in range(0, self.lvl):
+            for j in range(0, self.lvl):
+                for value in cross((i,j),self.lvl).values():
+                    if self.SureEnv[i][j] != '_' and self.SureEnv[value[0]][value[1]]=='_':
+                        if 'P' in self.SureEnv[i][j]:
+                            self.UnsureEnv[value[0]][value[1]]='D'
+                        if 'C' in self.SureEnv[i][j]:
+                            self.UnsureEnv[value[0]][value[1]]='F'
+                        if 'H' in self.SureEnv[i][j] and 'V' not in self.SureEnv:
+                               self.UnsureEnv[value[0]][value[1]]='V'
+        self.display_env(self.UnsureEnv)
 
     
     def VictimFound(self):
-        # if 'V' in self.env[self.position[0]][self.position[1]]:
-        #     return 0
+        if 'V' in self.SureEnv:
+            print("Victim Found!")
+            return 0
         
         #if robot position and at least two adjacents cells contains shouts
-        if 'H' in self.env[self.position[0]][self.position[1]] and sum('H' in self.env[x[0]][x[1]] for x in cross(self.position)) >= 2:
-            return 0
+        #if 'H' in self.SureEnv[self.position[0]][self.position[1]] and sum('H' in self.SureEnv[x[0]][x[1]] for x in cross(self.position,self.lvl)) >= 2:
+         #   return 0
 
 
     
     def execute(self):
-        if self.plan_action != []:
-            print("Executing action plan...")
-            envi=Env.instance()
-            for i in self.plan_action:
-                self.roomsVisited+=1
-                
-            self.position=self.destination
-
+        for key, value in cross(self.position,self.lvl).items(): #for each destination possible
+            return "TO DO"
     
     def inference_engine(self):
         print("START ANALYSIS CYCLE")
@@ -69,13 +80,22 @@ class Robot:
             # self.ApplyRules()
             print("CYCLE FINISHED")
             print()
-            time.sleep(3)
         else:
             return 0
         
     
-def cross(position):
-    listPos=[(position[0],position[1]),(position[0]+1,position[1]),(position[0],position[1]+1),(position[0]-1,position[1]),(position[0],position[1]-1)]
+def cross(position, envLen):
+    listPos = {}
+    listPos["centre"]=((position[0], position[1]))
+    if position[0]-1 >= 0 :
+        listPos["gauche"]=((position[0]-1, position[1]))
+    if position[0]+1<envLen:
+        listPos["droite"]=((position[0]+1, position[1]))
+    if position[1]-1 >= 0 :
+        listPos["bas"]=((position[0], position[1]-1))
+    if position[1]+1<envLen:
+        listPos["haut"]=((position[0], position[1]+1))
+
     return listPos
     
 

@@ -11,6 +11,7 @@ class Env:
         #F = Feu ; D = Décombres ; P = Poussière ; C = Chaleur ; V = Victime ; R = Robot ; H = Hurlements
         self.env = [['' for i in range(level+2)] for j in range(level+2)]
         self.size = level + 2
+        self.env[0][0]='R'
         for i in range(level + 1):
             if random.random()<0.5:
                 self.fire_spawn()
@@ -41,7 +42,7 @@ class Env:
         x=random.randrange(0,self.size)
         y=random.randrange(0,self.size)
         if not ('F' in self.env[x][y] or 'D' in self.env[x][y]) and [x,y] != [0,0]:
-            self.env[x][y] = 'VH'
+            self.env[x][y] = 'V'
             self.scream_spawn(x,y)
         else:
             self.victim_spawn()
@@ -65,7 +66,7 @@ class Env:
         self.env[i][min(j+1, self.size-1)] += 'H'
         self.env[max(i-1, 0)][j] += 'H'
         self.env[i][max(j-1, 0)] += 'H'
-        self.env[i][j] = 'VH'
+        self.env[i][j] = 'V'
     
     def print_env(self):
         for i in self.env:
