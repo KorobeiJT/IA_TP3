@@ -1,5 +1,3 @@
-
-import threading
 from Robot import Robot
 from Env import Env
 
