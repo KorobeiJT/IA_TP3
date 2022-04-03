@@ -12,7 +12,7 @@ class Env:
         self.env = [['' for i in range(level+2)] for j in range(level+2)]
         self.size = level + 2
         self.env[0][0]='R'
-        for i in range(level + 1):
+        for i in range(max((level**2)//3, 2)):
             if random.random()<0.5:
                 self.fire_spawn()
             else:

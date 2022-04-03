@@ -7,7 +7,7 @@ class Sensor:
         f= Env.instance()
         MapCapt={}
         for var in cross(position,len(f.env)):
-            MapCapt[var]=f.env[var[0]][var[1]]
+            MapCapt[var]=f.env[var[0]][var[1]].replace("R","")
         return MapCapt
 
 def cross(position, envLen):
@@ -21,5 +21,4 @@ def cross(position, envLen):
         listPos.append((position[0], position[1]-1))
     if position[1]+1<envLen:
         listPos.append((position[0], position[1]+1))
-
     return listPos
