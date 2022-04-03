@@ -15,7 +15,6 @@ class Robot:
     sensor=Sensor()
     effector=Effector()
     dead=False
-    move="haut"
 
     def __init__(self, level):
         self.lvl=level+2
